@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corriente, Resistencia y Circuitos DC - Portada</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración de Fuente Inter y Estilo Minimalista de Alto Contraste -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff; /* Fondo blanco puro */
+            color: #111827; /* Texto negro muy oscuro */
+        }
+        .main-title-container {
+            /* Contenedor del título con la barra vertical */
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem; /* Espacio entre la barra y el texto */
+        }
+        .vertical-bar {
+            /* Barra vertical negra */
+            width: 5px;
+            height: 100%;
+            min-height: 150px;
+            background-color: #111827;
+        }
+        .nav-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #e5e7eb; /* Borde gris sutil */
+        }
+        .nav-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Sombra suave */
+            border-color: #111827; /* Acentuar el borde al pasar el ratón */
+        }
+        /* Estilo para el pie de página discreto */
+        footer {
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado / Menú de Navegación de Alto Contraste -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-extrabold text-gray-900 border border-gray-900 px-2 py-1 tracking-widest">FÍSICA.</h1>
+            
+            <!-- Menú de Desktop (Negro) -->
+            <nav id="main-nav" class="hidden md:flex space-x-6 text-gray-900 font-medium">
+                <a href="index.html" class="hover:text-blue-600 transition duration-300">INICIO</a>
+                <a href="conceptos.html" class="hover:text-blue-600 transition duration-300">CONCEPTOS</a>
+                <a href="leyes.html" class="hover:text-blue-600 transition duration-300">LEYES</a>
+                <a href="circuitos.html" class="hover:text-blue-600 transition duration-300">CIRCUITOS</a>
+            </nav>
+
+            <!-- Botón Hamburguesa (Mobile) -->
+            <button id="menu-toggle" class="md:hidden p-2 rounded-lg text-gray-900 hover:bg-gray-100 transition duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+
+        <!-- Menú Responsive Móvil (Oculto por defecto) -->
+        <nav id="mobile-menu" class="hidden md:hidden bg-white flex flex-col items-center py-4 space-y-2 border-t border-gray-100">
+            <a href="index.html" class="py-2 w-full text-center hover:bg-gray-100">INICIO</a>
+            <a href="conceptos.html" class="py-2 w-full text-center hover:bg-gray-100">CONCEPTOS</a>
+            <a href="leyes.html" class="py-2 w-full text-center hover:bg-gray-100">LEYES</a>
+            <a href="circuitos.html" class="py-2 w-full text-center hover:bg-gray-100">CIRCUITOS</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-16 md:py-24">
+
+        <!-- 1. Título y Barra Vertical (Efecto "Física Moderna") -->
+        <section class="max-w-4xl mx-auto mb-16 px-4 md:px-0">
+            <div class="main-title-container">
+                <div class="vertical-bar"></div>
+                <div>
+                    <h2 class="text-6xl md:text-8xl font-black leading-none mb-3 tracking-tight">
+                        FÍSICA
+                        <span class="block">MODERNA</span>
+                    </h2>
+                    <p class="text-xl text-gray-600">
+                        Corriente, Resistencia y Circuitos de Corriente Directa.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Introducción al Tema (Debajo del Título) -->
+        <section class="max-w-4xl mx-auto mb-16 px-4 md:px-0">
+             <div class="p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Introducción al Tema</h3>
+                <p class="text-gray-700 leading-relaxed text-left">
+                    El estudio de los circuitos de corriente directa (DC) es el punto de partida para entender cómo la energía eléctrica se mueve y se controla. Esta página explora los conceptos esenciales—la **corriente** como flujo de carga, la **resistencia** como oposición a ese flujo—y culmina con las leyes universales de **Ohm** y **Kirchhoff**, que nos permiten analizar y diseñar cualquier circuito básico. Finalmente, introduciremos los **circuitos RC**, que demuestran el comportamiento dinámico de la electricidad en función del tiempo.
+                </p>
+            </div>
+        </section>
+
+
+        <!-- 3. Tarjetas de Navegación (Conceptos, Leyes, Circuitos) -->
+        <section class="max-w-4xl mx-auto space-y-6 px-4 md:px-0">
+            
+            <a href="conceptos.html" class="nav-card block p-8 bg-white rounded-lg transition duration-300 hover:bg-gray-50">
+                <h3 class="text-2xl font-bold mb-1 tracking-wider">01. CONCEPTOS BÁSICOS</h3>
+                <p class="text-gray-600">Corriente, resistencia y conductividad.</p>
+            </a>
+
+            <a href="leyes.html" class="nav-card block p-8 bg-white rounded-lg transition duration-300 hover:bg-gray-50 group flex justify-between items-center">
+                <div>
+                    <h3 class="text-2xl font-bold mb-1 tracking-wider">02. LEYES FUNDAMENTALES</h3>
+                    <p class="text-gray-600">Ohm, Kirchhoff y potencia.</p>
+                </div>
+                <!-- Flecha de la imagen -->
+                <svg class="w-6 h-6 text-gray-900 group-hover:translate-x-1 transition duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+
+            <a href="circuitos.html" class="nav-card block p-8 bg-white rounded-lg transition duration-300 hover:bg-gray-50">
+                <h3 class="text-2xl font-bold mb-1 tracking-wider">03. CIRCUITOS RC</h3>
+                <p class="text-gray-600">Simulación de carga y descarga.</p>
+            </a>
+            
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-gray-700 p-6 text-center text-sm border-t border-gray-200 mt-20">
+        <p>&copy; 2025 Introducción a la Electricidad. Contenido para fines educativos.</p>
+    </footer>
+
+    <!-- Script para Interactividad (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ----------------------------------------------------
+            // 1. Menú Responsive (Botón Hamburguesa)
+            // ----------------------------------------------------
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuToggle.addEventListener('click', () => {
+                // Alterna la visibilidad del menú móvil
+                mobileMenu.classList.toggle('hidden');
+            });
+
+        });
+    </script>
+</body>
+</html>

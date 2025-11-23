@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuitos RC - Carga y Descarga</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 1. **CONFIGURACIÓN DE MATHJAX** (Importante: Esto activa el uso de '$') -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    
+    <!-- 2. **CARGA DE MATHJAX** -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- Configuración de Fuente Inter y Estilo Minimalista (Alto Contraste) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+
+        .section-title {
+            /* Línea de acento cambiada a negro */
+            border-left: 5px solid #111827;
+            padding-left: 1rem;
+        }
+
+        /* Estilo para el Tooltip */
+        .formula-tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #1A73E8;
+        }
+
+        .formula-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #1A73E8;
+            /* Azul para el tooltip */
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .formula-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Estilos específicos para el Canvas de la Gráfica */
+        #rc-graph-canvas {
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            width: 100%;
+            /* Haz que el canvas ocupe el 100% de su contenedor */
+            max-width: 800px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Estilo para los inputs */
+        input[type="number"] {
+            border: 1px solid #d1d5db;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            width: 100%;
+            max-width: 150px;
+            text-align: center;
+        }
+
+        /* Botón de recálculo */
+        #recalculate-btn {
+            background-color: #1A73E8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        #recalculate-btn:hover {
+            background-color: #155cbb;
+        }
+
+        /* Estilos para el recuadro de imágenes (similar al video) */
+        .image-gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .image-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            overflow: hidden;
+        }
+        .image-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .image-card img {
+            width: 100%;
+            height: auto;
+            max-height: 150px; /* Limita la altura para estética */
+            object-fit: contain; /* Asegura que la imagen se vea completa */
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Encabezado / Menú de Navegación de Alto Contraste -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-extrabold text-gray-900 border border-gray-900 px-2 py-1 tracking-widest">FÍSICA.
+            </h1>
+
+            <!-- Menú de Desktop (Negro) -->
+            <nav id="main-nav" class="hidden md:flex space-x-6 text-gray-900 font-medium">
+                <a href="index.html" class="hover:text-blue-600 transition duration-300">INICIO</a>
+                <a href="conceptos.html" class="hover:text-blue-600 transition duration-300">CONCEPTOS</a>
+                <a href="leyes.html" class="hover:text-blue-600 transition duration-300">LEYES</a>
+                <a href="circuitos.html" class="text-blue-600 font-semibold border-b-2 border-blue-600">CIRCUITOS</a>
+            </nav>
+
+            <!-- Botón Hamburguesa (Mobile) -->
+            <button id="menu-toggle"
+                class="md:hidden p-2 rounded-lg text-gray-900 hover:bg-gray-100 transition duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Menú Responsive Móvil (Oculto por defecto) -->
+        <nav id="mobile-menu"
+            class="hidden md:hidden bg-white flex flex-col items-center py-4 space-y-2 border-t border-gray-100">
+            <a href="index.html" class="py-2 w-full text-center hover:bg-gray-100">INICIO</a>
+            <a href="conceptos.html" class="py-2 w-full text-center hover:bg-gray-100">CONCEPTOS</a>
+            <a href="leyes.html" class="py-2 w-full text-center hover:bg-gray-100">LEYES</a>
+            <a href="circuitos.html"
+                class="py-2 w-full text-center hover:bg-gray-100 bg-gray-50 font-medium">CIRCUITOS</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Contenido Principal - Circuitos RC -->
+        <section id="rc-circuits-section" class="bg-white p-8 rounded-xl shadow-lg mb-12 border border-gray-100">
+            <h2 class="text-4xl font-extrabold section-title mb-8 text-gray-900">Aplicaciones: Circuitos RC</h2>
+
+            <!-- Índice de Subtemas (Navegación interna) -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6 border-l-4 border-gray-900 shadow-sm">
+                <h3 class="text-xl font-semibold mb-3 text-gray-900">Índice</h3>
+                <ul class="list-none space-y-2 text-gray-700">
+                    <li>4.9.1 <a href="#rc-basics" class="index-link hover:underline smooth-scroll">Fundamentos del Circuito RC</a></li>
+                    <li>4.9.2 <a href="#rc-transient" class="index-link hover:underline smooth-scroll">Respuesta Transitoria: Carga y Descarga</a></li>
+                    <li>4.9.3 <a href="#rc-applications" class="index-link hover:underline smooth-scroll">Aplicaciones Comunes del Circuito RC</a></li>
+                    <li>4.9.4 <a href="#rc-diagrams" class="index-link hover:underline smooth-scroll">Diagramas de Circuitos RC de Ejemplo</a></li>
+                </ul>
+            </div>
+
+            <article id="rc-basics" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.9.1 Fundamentos del Circuito RC</h4>
+                <p class="text-gray-700 mb-2">Un circuito $RC$ es un circuito de primer orden que combina un resistor ($R$) y un capacitor ($C$) en serie o en paralelo. Es el circuito reactivo más simple de corriente directa. Su análisis nos permite entender cómo los elementos que almacenan energía (capacitores) interactúan con los elementos que disipan energía (resistores), dando lugar a la **respuesta transitoria**.</p>
+                
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Comportamiento del Capacitor en DC</h5>
+                <p class="text-gray-600 text-sm">El capacitor ($C$) almacena energía potencial eléctrica entre dos placas conductoras separadas por un dieléctrico. En circuitos $DC$: en el instante inicial, el capacitor actúa como un **cortocircuito** (permite el flujo máximo de corriente). Una vez que está completamente cargado, el voltaje en sus terminales es igual al de la fuente y actúa como un **circuito abierto**, deteniendo el flujo de corriente en esa rama. Este comportamiento dual es la clave para las aplicaciones de temporización.</p>
+
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Constante de Tiempo ($\tau$)</h5>
+                <p class="text-gray-700 mb-2">La **constante de tiempo** ($\tau$) es el producto de la resistencia y la capacitancia ($\tau = R \cdot C$). Físicamente, representa el tiempo necesario para que el voltaje del capacitor alcance el $63.2\%$ de su valor final durante la carga, o decaiga al $36.8\%$ de su valor inicial durante la descarga. Un $\tau$ más grande implica un proceso de carga/descarga más lento.</p>
+
+                <div class="my-4 p-4 bg-gray-100 rounded-lg text-center font-bold text-2xl text-gray-800">
+                    $$\tau = R \cdot C \quad [\text{segundos}]$$
+                </div>
+            </article>
+
+            <article id="rc-transient" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.9.2 Respuesta Transitoria: Carga y Descarga</h4>
+                <p class="text-gray-700 mb-2">La **respuesta transitoria** describe la variación de voltaje y corriente en el circuito $RC$ desde el momento en que se aplica un cambio de estado (ej. cerrar un interruptor) hasta que el circuito alcanza el equilibrio (**estado estacionario**).</p>
+
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Curva de Carga del Capacitor</h5>
+                <p class="text-gray-700 mb-2">El voltaje
+                    del capacitor ($V_C$) comienza en $0$ y crece exponencialmente hacia el voltaje de la fuente ($V_0$). La tasa de crecimiento está determinada por $\tau$. La fórmula que describe este voltaje en cualquier instante ($t$) es:
+                    $$V_C(t) = V_0 (1 - e^{-t/\tau})$$
+                    Para efectos prácticos, después de $5\tau$, el capacitor se considera completamente cargado ($V_C \approx V_0$). </p>
+
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Curva de Descarga del Capacitor</h5>
+                <p class="text-gray-700 mb-2">Durante la descarga, el capacitor se comporta como la fuente de energía. El voltaje inicial ($V_0$) decae exponencialmente hacia cero cuando se conecta al resistor. La ecuación es:
+                    $$V_C(t) = V_0 \cdot e^{-t/\tau}$$
+                    La descarga también es controlada por la constante de tiempo $\tau$, y toma aproximadamente $5\tau$ para que el voltaje caiga casi a cero. </p>
+                    
+            </article>
+
+            <article id="rc-applications" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.9.3 Aplicaciones Comunes del Circuito RC</h4>
+                <p class="text-gray-700 mb-2">La capacidad de los circuitos $RC$ de controlar el tiempo y la frecuencia los hace omnipresentes en la electrónica:</p>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li>**Temporizadores (Timing Circuits):** La constante $\tau$ se usa para generar demoras o pulsos de tiempo específicos. Componentes fundamentales en microcontroladores.</li>
+                    <li>**Filtros de Señal:** Utilizados en audio y radiofrecuencia para separar señales, como bloquear el ruido de alta frecuencia (Filtros Pasa-Bajos) o permitir solo las frecuencias deseadas.</li>
+                    <li>**Integradores y Derivadores:** En el procesamiento de señales, los circuitos $RC$ pueden aproximar las operaciones matemáticas de integración y derivación.</li>
+                    <li>**Circuitos de Retardo de Encendido/Apagado:** Usados para proteger componentes o asegurar secuencias de encendido controladas, retrasando la aplicación de voltaje.</li>
+                </ul>
+            </article>
+            
+            <!-- Recuadro para Diagramas de Circuitos -->
+            <article id="rc-diagrams" class="mt-10 p-6 bg-white rounded-xl border border-gray-200 shadow-md">
+                <h4 class="text-2xl font-semibold mb-4 text-gray-900 border-l-4 border-blue-600 pl-3">4.9.4 Diagramas de Circuitos RC de Ejemplo</h4>
+                <p class="text-gray-700 mb-6">Visualizar los diagramas es crucial. A continuación, se muestran ejemplos de circuitos $RC$ básicos de carga y descarga.</p>
+
+                <div class="image-gallery-container">
+                    
+                    <div class="image-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxMRfZ4DoXKgrv99MXNyfYgLqGoo7iB1If6w&s" 
+                             alt="Circuito RC de carga en serie"
+                             onerror="this.onerror=null; this.src='https://placehold.co/300x150/f0f0f0/333333?text=Diagrama+RC+Carga';">
+                        <p class="mt-2 text-sm text-center font-normal text-gray-600">Circuito RC de carga en serie con una fuente de voltaje.</p>
+                    </div>
+
+                    <div class="image-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV0cPIcZzVu-DglMSS2KWQL-F4lazmtcm21A&s" 
+                             alt="Circuito RC de descarga"
+                             onerror="this.onerror=null; this.src='https://placehold.co/300x150/f0f0f0/333333?text=Diagrama+RC+Descarga';">
+                        <p class="mt-2 text-sm text-center font-normal text-gray-600">Circuito RC de descarga (capacitor actúa como fuente).</p>
+                    </div>
+
+                    <div class="image-card">
+                        <img src="https://www.shutterstock.com/image-vector/parallel-rlc-circuit-diagram-inductance-260nw-2651948645.jpg" 
+                             alt="Circuito RLC en paralelo"
+                             onerror="this.onerror=null; this.src='https://placehold.co/300x150/f0f0f0/333333?text=Diagrama+RLC+Paralelo';">
+                        <p class="mt-2 text-sm text-center font-normal text-gray-600">Circuito RLC en paralelo (ejemplo de un circuito de segundo orden).</p>
+                    </div>
+
+                </div>
+            </article>
+            <!-- Fin del Recuadro de Imágenes -->
+
+
+            <!-- Simulador de Gráfica RC (Canvas) -->
+            <section class="mt-12 p-6 bg-white rounded-xl border border-blue-100 shadow-inner">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 text-center">Simulación Interactiva: Curva de Carga</h3>
+                <p class="text-center text-gray-600 mb-6">Modifica los valores de $R$ y $C$ para observar cómo cambia la
+                    constante de tiempo ($\tau$) y la forma de la curva de carga.</p>
+
+                <!-- Controles -->
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <label for="resistance-input" class="font-medium">Resistencia ($R$ en $\text{k}\Omega$):</label>
+                        <input type="number" id="resistance-input" value="10" min="1" max="100" class="shadow-sm">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label for="capacitance-input" class="font-medium">Capacitancia ($C$ en $\mu\text{F}$):</label>
+                        <input type="number" id="capacitance-input" value="100" min="1" max="500" class="shadow-sm">
+                    </div>
+                    <button id="recalculate-btn" class="font-bold shadow-md hover:shadow-lg">Recalcular Gráfica</button>
+                </div>
+
+                <!-- Resultado de Tau -->
+                <p class="text-center text-md font-semibold text-gray-800 mb-6">
+                    Constante de Tiempo $\tau$: <span id="tau-value" class="text-blue-600 font-extrabold">1.0 s</span>
+                </p>
+
+                <!-- Canvas para la Gráfica -->
+                <div class="flex justify-center">
+                    <canvas id="rc-graph-canvas" width="800" height="400"></canvas>
+                </div>
+
+            </section>
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-gray-700 p-6 text-center text-sm border-t border-gray-200 shadow-inner">
+        <p>&copy; 2025 Introducción a la Electricidad. Contenido para fines educativos.</p>
+    </footer>
+
+    <!-- Script para Interactividad (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ----------------------------------------------------
+            // 1. Menú Responsive (Botón Hamburguesa)
+            // ----------------------------------------------------
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // ----------------------------------------------------
+            // 2. Gráfica RC (Canvas sin librerías)
+            // ----------------------------------------------------
+            const canvas = document.getElementById('rc-graph-canvas');
+            const ctx = canvas.getContext('2d');
+            const resistanceInput = document.getElementById('resistance-input');
+            const capacitanceInput = document.getElementById('capacitance-input');
+            const recalculateBtn = document.getElementById('recalculate-btn');
+            const tauValueSpan = document.getElementById('tau-value');
+
+            // Parámetros de la gráfica
+            const V0 = 10; // Voltaje máximo de la fuente (V)
+            const canvasHeight = canvas.height;
+            const canvasWidth = canvas.width;
+            const padding = 50; // Margen para los ejes
+
+            function drawRCLoadingCurve() {
+                // Limpiar el canvas
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                // Obtener valores de los inputs (R en kΩ, C en µF)
+                const R_kOhm = parseFloat(resistanceInput.value) || 10;
+                const C_uF = parseFloat(capacitanceInput.value) || 100;
+
+                // Convertir a unidades base (R en Ohm, C en Faradios)
+                const R = R_kOhm * 1000;
+                const C = C_uF * 0.000001; // 10^-6
+                const tau = R * C; // Constante de tiempo en segundos
+
+                // Mostrar el valor de tau
+                tauValueSpan.textContent = `${tau.toFixed(2)} s`;
+
+
+                // Configuración de ejes y escalado
+                // Usaremos 5*tau como el tiempo máximo (5T se considera "completamente" cargado)
+                const tMax = tau * 5;
+                const scaleX = (canvasWidth - 2 * padding) / tMax;
+                const scaleY = (canvasHeight - 2 * padding) / V0;
+
+
+                // --- 1. Dibujar Ejes (X y Y) ---
+                ctx.strokeStyle = '#374151'; // Gris oscuro
+                ctx.lineWidth = 2;
+
+                // Eje Y (Voltaje)
+                ctx.beginPath();
+                ctx.moveTo(padding, padding);
+                ctx.lineTo(padding, canvasHeight - padding);
+                ctx.stroke();
+
+                // Eje X (Tiempo)
+                ctx.beginPath();
+                ctx.moveTo(padding, canvasHeight - padding);
+                ctx.lineTo(canvasWidth - padding, canvasHeight - padding);
+                ctx.stroke();
+
+                // --- 2. Etiquetas y Ticks ---
+                ctx.fillStyle = '#111827';
+                ctx.font = '14px Inter';
+                ctx.textAlign = 'center';
+
+                // Etiqueta del Eje Y
+                ctx.save();
+                ctx.translate(padding / 3, canvasHeight / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('Voltaje Vc (V)', 0, 0);
+                ctx.restore();
+
+                // Etiqueta del Eje X
+                ctx.fillText('Tiempo t (s)', canvasWidth / 2, canvasHeight - padding / 3);
+
+                // Valor máximo de Voltaje (V0)
+                ctx.textAlign = 'right';
+                ctx.fillText(V0.toFixed(0) + ' V', padding - 10, padding + 5);
+                ctx.textAlign = 'center';
+
+                // Valor de Tau (eje X)
+                ctx.strokeStyle = '#9CA3AF';
+                ctx.setLineDash([5, 5]); // Línea punteada
+                
+                // Marca T = tau
+                const xTau = padding + tau * scaleX;
+                ctx.beginPath();
+                ctx.moveTo(xTau, canvasHeight - padding);
+                ctx.lineTo(xTau, padding);
+                ctx.stroke();
+                ctx.fillText(`τ (${tau.toFixed(2)}s)`, xTau, canvasHeight - padding + 20);
+
+                // Marca V = 0.632 * V0 (63.2%)
+                const V_63_2 = V0 * 0.632;
+                const y_63_2 = canvasHeight - padding - V_63_2 * scaleY;
+                
+                ctx.beginPath();
+                ctx.moveTo(padding, y_63_2);
+                ctx.lineTo(canvasWidth - padding, y_63_2);
+                ctx.stroke();
+                
+                ctx.textAlign = 'right';
+                ctx.fillText(`${V_63_2.toFixed(1)} V (63.2%)`, padding - 10, y_63_2 + 5);
+
+
+                // Restaurar la línea sólida para la curva
+                ctx.setLineDash([]); 
+
+                // --- 3. Dibujar la Curva de Carga ---
+                ctx.strokeStyle = '#EF4444'; // Rojo vibrante para la curva
+                ctx.lineWidth = 3;
+                
+                ctx.beginPath();
+                // Calcular y dibujar el primer punto
+                let t = 0;
+                let Vc = V0 * (1 - Math.exp(-t / tau));
+                let x = padding + t * scaleX;
+                let y = canvasHeight - padding - Vc * scaleY;
+                ctx.moveTo(x, y);
+
+                // Iterar y dibujar el resto de la curva
+                for (let i = 1; i <= canvasWidth - 2 * padding; i++) {
+                    // Mapear la coordenada de píxel 'i' de vuelta a tiempo 't'
+                    t = (i / (canvasWidth - 2 * padding)) * tMax;
+                    Vc = V0 * (1 - Math.exp(-t / tau));
+
+                    x = padding + t * scaleX;
+                    y = canvasHeight - padding - Vc * scaleY;
+
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Línea de Carga Máxima (asíntota)
+                ctx.strokeStyle = '#22C55E'; // Verde
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padding, padding);
+                ctx.lineTo(canvasWidth - padding, padding);
+                ctx.stroke();
+
+                ctx.textAlign = 'left';
+                ctx.fillText(`Vf = ${V0} V`, canvasWidth - padding + 5, padding + 5);
+            }
+
+            // Event listener para el botón de recalcular
+            recalculateBtn.addEventListener('click', drawRCLoadingCurve);
+
+            // Inicializar la gráfica al cargar la página
+            drawRCLoadingCurve();
+
+        });
+    </script>
+</body>
+
+</html>

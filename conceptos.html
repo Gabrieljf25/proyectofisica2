@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptos Básicos - Corriente y Resistencia</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 1. **CONFIGURACIÓN DE MATHJAX** -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    
+    <!-- 2. **CARGA DE MATHJAX** -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- Configuración de Fuente Inter y Estilo Minimalista (Alto Contraste) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+
+        .section-title {
+            border-left: 5px solid #111827;
+            padding-left: 1rem;
+        }
+
+        /* Estilo para el Tooltip */
+        .formula-tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #9CA3AF; 
+        }
+
+        .formula-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #1A73E8;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .formula-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Estilos para transiciones de JS (Detalle) */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .collapsible-content.open {
+            max-height: 200px;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        /* Estilo para resaltar la sección activa en el índice */
+        .index-link.active {
+            font-weight: 700;
+            color: #1A73E8;
+            background-color: #F0F5FF;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        
+        /* Contenedor responsive para el video */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Estilos para las Tarjetas de Curiosidades */
+        .curiosity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .curiosity-card {
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .curiosity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: #1A73E8;
+        }
+        .curiosity-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Encabezado / Menú de Navegación -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-extrabold text-gray-900 border border-gray-900 px-2 py-1 tracking-widest">FÍSICA.
+            </h1>
+
+            <!-- Menú de Desktop -->
+            <nav id="main-nav" class="hidden md:flex space-x-6 text-gray-900 font-medium">
+                <a href="index.html" class="hover:text-blue-600 transition duration-300">INICIO</a>
+                <a href="conceptos.html" class="text-blue-600 font-semibold border-b-2 border-blue-600">CONCEPTOS</a>
+                <a href="leyes.html" class="hover:text-blue-600 transition duration-300">LEYES</a>
+                <a href="circuitos.html" class="hover:text-blue-600 transition duration-300">CIRCUITOS</a>
+            </nav>
+
+            <!-- Botón Hamburguesa -->
+            <button id="menu-toggle"
+                class="md:hidden p-2 rounded-lg text-gray-900 hover:bg-gray-100 transition duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Menú Responsive -->
+        <nav id="mobile-menu"
+            class="hidden md:hidden bg-white flex flex-col items-center py-4 space-y-2 border-t border-gray-100">
+            <a href="index.html" class="py-2 w-full text-center hover:bg-gray-100">INICIO</a>
+            <a href="conceptos.html"
+                class="py-2 w-full text-center hover:bg-gray-100 bg-gray-50 font-medium">CONCEPTOS</a>
+            <a href="leyes.html" class="py-2 w-full text-center hover:bg-gray-100">LEYES</a>
+            <a href="circuitos.html" class="py-2 w-full text-center hover:bg-gray-100">CIRCUITOS</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Contenido Principal -->
+        <section id="conceptos" class="bg-white p-8 rounded-xl shadow-lg mb-12 border border-gray-100">
+            <h2 class="text-4xl font-extrabold section-title mb-8 text-gray-900">Fundamentos de Corriente y Resistencia
+            </h2>
+
+            <!-- Índice -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6 border-l-4 border-gray-900 shadow-sm">
+                <h3 class="text-xl font-semibold mb-3 text-gray-900">Índice</h3>
+                <ul class="list-none space-y-2 text-gray-700">
+                    <li>4.1 <a href="#current" class="index-link hover:underline smooth-scroll">Corriente eléctrica</a>
+                    </li>
+                    <li>4.2 <a href="#resistance" class="index-link hover:underline smooth-scroll">Resistencia</a></li>
+                    <li>4.3 <a href="#resistivity" class="index-link hover:underline smooth-scroll">Resistividad</a>
+                    </li>
+                    <li>4.4 <a href="#density" class="index-link hover:underline smooth-scroll">Densidad de
+                            corriente</a></li>
+                    <li>4.5 <a href="#conductivity" class="index-link hover:underline smooth-scroll">Conductividad</a>
+                    </li>
+                </ul>
+            </div>
+
+            <article id="current" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.1 Corriente eléctrica (<span
+                        class="formula-tooltip">$I$<span class="tooltip-text">Definida como la carga ($\Delta Q$) que
+                            fluye a través de una sección transversal por unidad de tiempo ($\Delta t$). Unidad: Amperio
+                            ($\text{A}$).</span></span>)</h4>
+                <p class="text-gray-700 mb-2">Es el flujo ordenado de carga eléctrica a través de un material conductor. Aunque los electrones son los portadores de carga físicos en los metales, convencionalmente definimos la dirección de la corriente como el flujo de cargas positivas (del polo positivo al negativo). Este flujo es impulsado por una diferencia de potencial o campo eléctrico.</p>
+                
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Naturaleza del Flujo</h5>
+                <p class="text-gray-600 text-sm">Es importante distinguir entre la velocidad de la señal eléctrica (cercana a la velocidad de la luz) y la **velocidad de arrastre** de los electrones, que es extremadamente lenta (del orden de $10^{-4}\ \text{m/s}$). La magnitud de la corriente es crucial para determinar la cantidad de energía transportada.</p>
+                
+                <div class="mt-3 text-md font-mono bg-gray-50 p-2 rounded-md border border-gray-200 inline-block">
+                    Fórmula Promedio: $$I_{med} = \frac{\Delta Q}{\Delta t}$$
+                    Fórmula Instantánea: $$I = \frac{dQ}{dt}$$
+                </div>
+            </article>
+
+            <article id="resistance" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.2 Resistencia (<span
+                        class="formula-tooltip">$R$<span class="tooltip-text">Oposición al flujo de corriente. Depende del
+                            material, longitud y área. Unidad: Ohm ($\Omega$).</span></span>)</h4>
+                <p class="text-gray-700 mb-2">Propiedad de un material que mide su oposición al flujo de corriente
+                    eléctrica. Esta oposición surge de las colisiones microscópicas entre los electrones en movimiento y la red atómica del conductor. </p>
+                
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Factores que afectan la Resistencia</h5>
+                <p class="text-gray-600 text-sm">La resistencia no es constante para todos los materiales; depende de la geometría del objeto y de la temperatura. En la mayoría de los metales, la resistencia aumenta con la temperatura debido a una mayor vibración atómica que dificulta el paso de los electrones.</p>
+
+                <button class="text-blue-600 font-medium mt-3 hover:underline transition duration-300"
+                    data-toggle-content="res-detail" data-open-text="Ocultar Detalle" data-close-text="Ver Detalle">Ver
+                    Detalle</button>
+                <div id="res-detail"
+                    class="collapsible-content mt-2 bg-gray-50 rounded-md text-sm border border-gray-200 p-3">
+                    La resistencia en un circuito se utiliza para limitar la corriente o para dividir el voltaje. Los resistores comerciales utilizan un código de colores para indicar su valor nominal y tolerancia.
+                </div>
+            </article>
+
+            <article id="resistivity" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.3 Resistividad ($\rho$)</h4>
+                <p class="text-gray-700 mb-2">La resistividad ($\rho$) es una propiedad física **intrínseca** de cada material, independiente de su forma o tamaño. Cuantifica qué tan fuertemente se opone el material al flujo de carga. Es el parámetro clave para distinguir entre materiales.</p>
+                
+                <ul class="list-disc list-inside space-y-1 text-gray-600 text-sm mb-3 pl-2">
+                    <li>**Conductores:** $\rho$ muy baja ($~10^{-8}\ \Omega\cdot\text{m}$) ej. Cobre, Plata.</li>
+                    <li>**Semiconductores:** $\rho$ variable, base de la electrónica moderna ($~10^{-5}$ a $10^{5}\ \Omega\cdot\text{m}$) ej. Silicio.</li>
+                    <li>**Aislantes:** $\rho$ extremadamente alta ($>10^{10}\ \Omega\cdot\text{m}$) ej. Vidrio, Caucho.</li>
+                </ul>
+
+                <div class="mt-3 text-md font-mono bg-gray-50 p-2 rounded-md border border-gray-200 inline-block">
+                    Relación con $R$: $$R = \rho \frac{L}{A}$$
+                    Donde $L$ es longitud y $A$ es área transversal.
+                </div>
+            </article>
+
+            <article id="density" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.4 Densidad de corriente (<span
+                        class="formula-tooltip">$J$<span class="tooltip-text">Corriente por unidad de área de la sección
+                            transversal. Es una magnitud vectorial. Unidad: $\text{A}/\text{m}^2$.</span></span>)</h4>
+                <p class="text-gray-700 mb-2">La densidad de corriente ($\mathbf{J}$) es una magnitud **vectorial** que describe cómo fluye la carga en un punto específico dentro de un conductor. A diferencia de la corriente $I$ (que es un escalar macroscópico), $\mathbf{J}$ nos dice la intensidad del flujo por unidad de área.</p>
+                <p class="text-gray-600 text-sm">En muchos materiales óhmicos, la densidad de corriente es directamente proporcional al campo eléctrico aplicado ($\mathbf{E}$), relación conocida como la forma microscópica de la Ley de Ohm.</p>
+                
+                <div class="mt-3 text-md font-mono bg-gray-50 p-2 rounded-md border border-gray-200 inline-block">
+                    Ley de Ohm Microscópica: $$\mathbf{J} = \sigma \mathbf{E}$$
+                </div>
+            </article>
+
+            <article id="conductivity" class="mb-6 p-4">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.5 Conductividad ($\sigma$)</h4>
+                <p class="text-gray-700 mb-2">La conductividad ($\sigma$) es la medida de la facilidad con la que un material permite el paso de la corriente eléctrica. Es matemáticamente el recíproco de la resistividad.</p>
+                <p class="text-gray-600 text-sm">Materiales con alta conductividad, como el oro y el cobre, son esenciales para minimizar pérdidas de energía en la transmisión eléctrica. Este parámetro ($\sigma$) es vital en ingeniería de materiales y electromagnetismo.</p>
+                
+                <div class="mt-3 text-md font-mono bg-gray-50 p-2 rounded-md border border-gray-200 inline-block">
+                    Relación: $$\sigma = \frac{1}{\rho} \quad [\text{Siemens/metro, S/m}]$$
+                </div>
+            </article>
+
+            <!-- Nueva Sección: Curiosidades (Reemplazando la búsqueda dinámica) -->
+            <section id="curiosidades" class="mt-12 mb-12">
+                <h3 class="text-3xl font-bold text-gray-900 mb-6 border-l-4 border-yellow-400 pl-4">Sabías que... Curiosidades Electrizantes</h3>
+                <div class="curiosity-grid">
+                    
+                    <!-- Tarjeta 1 -->
+                    <div class="curiosity-card">
+                        <span class="curiosity-icon">🐢⚡</span>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800">La carrera de los electrones</h4>
+                        <p class="text-sm text-gray-600">
+                            Aunque la señal eléctrica viaja casi a la velocidad de la luz ($300,000\ \text{km/s}$), los electrones en sí mismos se mueven muy lento, a una "velocidad de arrastre" de apenas unos milímetros por segundo. ¡Son más lentos que un caracol!
+                        </p>
+                    </div>
+
+                    <!-- Tarjeta 2 -->
+                    <div class="curiosity-card">
+                        <span class="curiosity-icon">🥇💻</span>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800">¿Por qué Oro?</h4>
+                        <p class="text-sm text-gray-600">
+                            La plata ($Ag$) es mejor conductor que el oro ($Au$). Sin embargo, usamos oro en los contactos de computadoras y celulares porque, a diferencia de la plata, el oro **no se oxida** ni se corroe, garantizando una conexión perfecta por años.
+                        </p>
+                    </div>
+
+                    <!-- Tarjeta 3 -->
+                    <div class="curiosity-card">
+                        <span class="curiosity-icon">🧊🔌</span>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800">Resistencia Cero</h4>
+                        <p class="text-sm text-gray-600">
+                            Existen materiales llamados **superconductores** que, al enfriarse a temperaturas extremas (cerca del cero absoluto), pierden *toda* su resistencia eléctrica. ¡La corriente podría fluir por ellos eternamente sin batería!
+                        </p>
+                    </div>
+
+                    <!-- Tarjeta 4 -->
+                    <div class="curiosity-card">
+                        <span class="curiosity-icon">🧍‍♂️⚡</span>
+                        <h4 class="font-bold text-lg mb-2 text-gray-800">Somos Resistencias</h4>
+                        <p class="text-sm text-gray-600">
+                            El cuerpo humano actúa como una resistencia variable. La piel seca tiene una resistencia alta ($~100,000\ \Omega$), protegiéndonos. Pero si la piel está mojada, la resistencia cae drásticamente ($~1,000\ \Omega$), haciéndonos muy vulnerables a descargas.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- Recuadro para Video de YouTube -->
+            <section class="mt-10 p-6 bg-gray-50 rounded-xl border-2 border-blue-200 shadow-md">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    Video Educativo: ¿Qué es la corriente eléctrica?
+                </h3>
+                <p class="text-gray-700 mb-4">Explicación visual detallada sobre el concepto de corriente eléctrica, tipos y características.</p>
+                
+                <!-- Contenedor Responsive 16:9 -->
+                <div class="video-container rounded-lg overflow-hidden shadow-lg">
+                    <iframe 
+                        src="https://www.youtube.com/embed/oLW5UqRaPbI" 
+                        title="YouTube video player (Qué es la Corriente Eléctrica)" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="text-sm text-gray-500 mt-2 text-center">Fuente: Canal de YouTube</p>
+            </section>
+            
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-gray-700 p-6 text-center text-sm border-t border-gray-200 shadow-inner">
+        <p>&copy; 2025 Introducción a la Electricidad. Contenido para fines educativos.</p>
+    </footer>
+
+    <!-- Script para Interactividad (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ----------------------------------------------------
+            // 1. Menú Responsive (Botón Hamburguesa)
+            // ----------------------------------------------------
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // ----------------------------------------------------
+            // 2. Scroll Suave para anclas internas
+            // ----------------------------------------------------
+            document.querySelectorAll('a.smooth-scroll').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Resta la altura del header sticky
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+
+            // ----------------------------------------------------
+            // 3. Mostrar/Ocultar Explicaciones (Detalle)
+            // ----------------------------------------------------
+            // Nota: Se ha eliminado la lógica de búsqueda API. 
+            // Se mantiene solo la lógica para botones de "Ver Detalle" si existen.
+            document.querySelectorAll('button[data-toggle-content]').forEach(button => {
+                const targetId = button.getAttribute('data-toggle-content');
+                const targetElement = document.getElementById(targetId);
+
+                if (button.hasAttribute('data-close-text')) {
+                    button.addEventListener('click', function () {
+                        if (targetElement) {
+                            targetElement.classList.toggle('open');
+                            const isOpen = targetElement.classList.contains('open');
+                            this.textContent = isOpen ? this.getAttribute('data-open-text') : this.getAttribute('data-close-text');
+                        }
+                    });
+                    // Inicialización
+                    targetElement.classList.remove('open');
+                    button.textContent = button.getAttribute('data-close-text');
+                }
+            });
+
+            // ----------------------------------------------------
+            // 4. Resaltar la Sección Activa en el Índice
+            // ----------------------------------------------------
+            const sections = document.querySelectorAll('article[id]');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    const link = document.querySelector(`.index-link[href="#${id}"]`);
+
+                    if (link) {
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.index-link').forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                        } 
+                    }
+                });
+            }, {
+                rootMargin: '-30% 0px -60% 0px'
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+        });
+    </script>
+</body>
+
+</html>

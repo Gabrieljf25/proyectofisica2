@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leyes y Fundamentos Eléctricos - Ohm y Kirchhoff</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 1. **CONFIGURACIÓN DE MATHJAX** (Para que funcionen los signos $) -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    
+    <!-- 2. **CARGA DE MATHJAX** -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- Configuración de Fuente Inter y Estilo Minimalista (Alto Contraste) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+
+        .section-title {
+            /* Línea de acento cambiada a negro */
+            border-left: 5px solid #111827;
+            padding-left: 1rem;
+        }
+
+        /* Estilo para el Tooltip */
+        .formula-tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #1A73E8;
+        }
+
+        .formula-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #1A73E8;
+            /* Azul para el tooltip */
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .formula-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Estilos para transiciones de JS (Mostrar/Ocultar Detalle) */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .collapsible-content.open {
+            /* Valor grande para asegurar que se abre */
+            max-height: 800px;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        
+        /* Estilo para resaltar la sección activa en el índice */
+        .index-link.active {
+            font-weight: 700;
+            color: #1A73E8;
+            background-color: #F0F5FF;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        
+        /* Contenedor responsive para el video */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Encabezado / Menú de Navegación de Alto Contraste -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-extrabold text-gray-900 border border-gray-900 px-2 py-1 tracking-widest">FÍSICA.
+            </h1>
+
+            <!-- Menú de Desktop (Negro) -->
+            <nav id="main-nav" class="hidden md:flex space-x-6 text-gray-900 font-medium">
+                <a href="index.html" class="hover:text-blue-600 transition duration-300">INICIO</a>
+                <a href="conceptos.html" class="hover:text-blue-600 transition duration-300">CONCEPTOS</a>
+                <a href="leyes.html" class="text-blue-600 font-semibold border-b-2 border-blue-600">LEYES</a>
+                <a href="circuitos.html" class="hover:text-blue-600 transition duration-300">CIRCUITOS</a>
+            </nav>
+
+            <!-- Botón Hamburguesa (Mobile) -->
+            <button id="menu-toggle"
+                class="md:hidden p-2 rounded-lg text-gray-900 hover:bg-gray-100 transition duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Menú Responsive Móvil (Oculto por defecto) -->
+        <nav id="mobile-menu"
+            class="hidden md:hidden bg-white flex flex-col items-center py-4 space-y-2 border-t border-gray-100">
+            <a href="index.html" class="py-2 w-full text-center hover:bg-gray-100">INICIO</a>
+            <a href="conceptos.html" class="py-2 w-full text-center hover:bg-gray-100">CONCEPTOS</a>
+            <a href="leyes.html"
+                class="py-2 w-full text-center hover:bg-gray-100 bg-gray-50 font-medium">LEYES</a>
+            <a href="circuitos.html" class="py-2 w-full text-center hover:bg-gray-100">CIRCUITOS</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Contenido Principal - Leyes y Fundamentos -->
+        <section id="leyes" class="bg-white p-8 rounded-xl shadow-lg mb-12 border border-gray-100">
+            <h2 class="text-4xl font-extrabold section-title mb-8 text-gray-900">Leyes y Fundamentos Eléctricos</h2>
+
+            <!-- Índice de Subtemas (Navegación interna) -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-6 border-l-4 border-gray-900 shadow-sm">
+                <h3 class="text-xl font-semibold mb-3 text-gray-900">Índice</h3>
+                <ul class="list-none space-y-2 text-gray-700">
+                    <li>4.6 <a href="#ohm" class="index-link hover:underline smooth-scroll">Ley de Ohm</a></li>
+                    <li>4.7 <a href="#power" class="index-link hover:underline smooth-scroll">Potencia eléctrica</a>
+                    </li>
+                    <li>4.8 <a href="#kirchhoff" class="index-link hover:underline smooth-scroll">Leyes de
+                            Kirchhoff</a></li>
+                </ul>
+            </div>
+
+            <article id="ohm" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.6 Ley de Ohm (<span
+                        class="formula-tooltip">$V=IR$<span class="tooltip-text">La diferencia de potencial ($V$) a través de
+                            un conductor es directamente proporcional a la corriente ($I$) que pasa por él, y la
+                            constante de proporcionalidad es la resistencia ($R$).</span></span>)</h4>
+                <p class="text-gray-700 mb-2">La Ley de Ohm, formulada por Georg Ohm, es la relación fundamental que
+                    describe el comportamiento de muchos materiales conductores, conocidos como **conductores óhmicos**. Establece que, para un conductor dado, la corriente ($I$) es directamente proporcional a la tensión ($V$) e inversamente proporcional a la resistencia ($R$).</p>
+                
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Relación y Alcance</h5>
+                <p class="text-gray-600 text-sm">La relación $V=I \cdot R$ se aplica primariamente a circuitos de corriente directa ($DC$) o a valores instantáneos en $AC$. Es crucial entender que la Ley de Ohm no es una ley universal como las de Kirchhoff, sino un modelo que describe el comportamiento de ciertos materiales (principalmente metales) bajo condiciones ideales. Materiales como los semiconductores o gases ionizados no siguen esta ley de manera lineal.</p>
+                
+                <div class="my-4 p-4 bg-gray-100 rounded-lg text-center font-bold text-2xl text-gray-800">
+                    $$V = I \cdot R$$
+                </div>
+
+                <p class="text-gray-600 text-sm">Esta ley es la herramienta principal para el análisis de circuitos
+                    resistivos simples, permitiendo calcular una de las tres variables ($V$, $I$, $R$) conociendo las otras
+                    dos. [Image of Diagrama de un circuito simple para la Ley de Ohm]
+                </p>
+
+                <button class="text-blue-600 font-medium mt-3 hover:underline transition duration-300"
+                    data-toggle-content="ohm-detail" data-open-text="Ocultar Ejemplo" data-close-text="Ver Ejemplo Práctico">Ver Ejemplo Práctico</button>
+                <div id="ohm-detail"
+                    class="collapsible-content mt-2 bg-gray-50 rounded-md text-sm border border-gray-200 p-4">
+                    <h5 class="font-bold mb-1">Ejemplo:</h5>
+                    <p>Si conectamos una bombilla con una resistencia ($R$) de $120\ \Omega$ a una fuente de voltaje ($V$) de $12\ \text{V}$ (una batería de coche), la corriente ($I$) que fluirá a través del circuito será:</p>
+                    <p class="font-mono mt-2">$$I = \frac{12\ \text{V}}{120\ \Omega} = 0.1\ \text{A}$$</p>
+                    <p class="mt-2">Esto significa que una corriente de $0.1$ Amperios atraviesa la bombilla.</p>
+                </div>
+            </article>
+
+            <article id="power" class="mb-8 p-4 border-b border-gray-100">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.7 Potencia eléctrica (<span
+                        class="formula-tooltip">$P$<span class="tooltip-text">Tasa a la que se transfiere o disipa la
+                            energía eléctrica en un circuito. Unidad: Vatio (W).</span></span>)</h4>
+                <p class="text-gray-700 mb-2">La potencia eléctrica ($P$) es la rapidez con la que un componente del
+                    circuito consume, suministra o disipa energía. En los resistores, la potencia se disipa totalmente en forma de calor, fenómeno conocido como **Efecto Joule**.</p>
+                
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Fórmulas Fundamentales</h5>
+                <p class="text-gray-600 text-sm">La potencia se define como el producto del voltaje y la corriente. Utilizando la Ley de Ohm ($V=IR$), podemos derivar dos formas alternativas para el cálculo de potencia en un resistor:</p>
+
+                <div class="my-4 p-4 bg-gray-100 rounded-lg text-center font-bold text-2xl text-gray-800">
+                    $$P = V \cdot I \quad \text{(General)}$$
+                    $$P = I^2 R \quad \text{(Disipación en Resistor)}$$
+                    $$P = \frac{V^2}{R} \quad \text{(Potencia en función del voltaje)}$$
+                </div>
+
+                <p class="text-gray-600 text-sm">La capacidad de disipar potencia es crítica; un resistor debe elegirse no solo por su valor de resistencia ($R$), sino también por su capacidad máxima de potencia ($W$), para evitar sobrecalentamiento y fallo.</p>
+            </article>
+
+            <article id="kirchhoff" class="mb-6 p-4">
+                <h4 class="text-2xl font-semibold mb-3 text-gray-900">4.8 Leyes de Kirchhoff</h4>
+                <p class="text-gray-700 mb-2">Las leyes de Kirchhoff, desarrolladas por Gustav Kirchhoff, son herramientas indispensables para el análisis sistemático de circuitos complejos (múltiples fuentes y ramas). Se basan en principios de conservación fundamentales. </p>
+                
+
+                <!-- Ley de Nudos -->
+                <h5 class="text-xl font-semibold mt-4 mb-2 border-l-4 border-blue-600 pl-3">Ley de Corrientes (LCK)</h5>
+                <p class="text-gray-700 mb-2">También conocida como Ley del Nodo (Nudo), se basa en el principio de **conservación de la carga eléctrica**. Establece que, en cualquier punto de unión de un circuito (nodo), la suma total de las corrientes que entran debe ser igual a la suma de las corrientes que salen. La carga no se acumula en un nodo.</p>
+                <div class="my-3 p-4 bg-gray-100 rounded-lg text-center font-mono text-xl text-gray-800">
+                    $$\sum I_{\text{entrantes}} = \sum I_{\text{salientes}} \quad \text{o} \quad \sum I_{\text{nodo}} = 0$$
+                </div>
+                <p class="text-gray-600 text-sm">**Importancia:** Permite establecer ecuaciones para encontrar corrientes desconocidas en circuitos con mallas y nodos múltiples.</p>
+
+                <!-- Ley de Mallas -->
+                <h5 class="text-xl font-semibold mt-6 mb-2 border-l-4 border-blue-600 pl-3">Ley de Tensiones (LVK)</h5>
+                <p class="text-gray-700 mb-2">También conocida como Ley del Lazo o Malla, se basa en la **conservación de la energía**. Establece que, si recorremos cualquier camino cerrado (malla) dentro de un circuito, la suma algebraica de todas las diferencias de potencial (voltajes) encontradas debe ser igual a cero. La energía ganada de las fuentes debe ser igual a la energía disipada en las resistencias.</p>
+                <div class="my-3 p-4 bg-gray-100 rounded-lg text-center font-mono text-xl text-gray-800">
+                    $$\sum V_{\text{malla}} = 0$$
+                </div>
+                <p class="text-gray-600 text-sm">**Importancia:** Permite establecer ecuaciones para encontrar voltajes desconocidos en cada lazo, lo cual es fundamental para el método de análisis por mallas.</p>
+
+            </article>
+            
+            <!-- Recuadro para Video de YouTube -->
+            <section class="mt-10 p-6 bg-gray-50 rounded-xl border-2 border-blue-200 shadow-md">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    Video de Profundización: Leyes de Ohm y Kirchhoff
+                </h3>
+                <p class="text-gray-700 mb-4">Observa este video para ver una demostración práctica de la aplicación de la Ley de Ohm y las Leyes de Kirchhoff en un circuito real.</p>
+                
+                <!-- Contenedor Responsive 16:9 -->
+                <div class="video-container rounded-lg overflow-hidden shadow-lg">
+                    <!-- URL de YouTube ACTUALIZADA al formato EMBED -->
+                    <iframe 
+                        src="https://www.youtube.com/embed/EwY13yT1tSo" 
+                        title="YouTube video player (Ley de Ohm y Leyes de Kirchhoff)" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="text-sm text-gray-500 mt-2 text-center">Fuente: Introducción a la Ley de Ohm y Leyes de Kirchhoff</p>
+            </section>
+            <!-- Fin del Recuadro de Video -->
+
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-gray-700 p-6 text-center text-sm border-t border-gray-200 shadow-inner">
+        <p>&copy; 2025 Introducción a la Electricidad. Contenido para fines educativos.</p>
+    </footer>
+
+    <!-- Script para Interactividad (JavaScript) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ----------------------------------------------------
+            // 1. Menú Responsive (Botón Hamburguesa)
+            // ----------------------------------------------------
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // ----------------------------------------------------
+            // 2. Scroll Suave para anclas internas
+            // ----------------------------------------------------
+            document.querySelectorAll('a.smooth-scroll').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Resta la altura del header sticky
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+
+            // ----------------------------------------------------
+            // 3. Mostrar/Ocultar Explicaciones con Transición Suave
+            // ----------------------------------------------------
+            document.querySelectorAll('button[data-toggle-content]').forEach(button => {
+                const targetId = button.getAttribute('data-toggle-content');
+                const targetElement = document.getElementById(targetId);
+
+                button.addEventListener('click', function () {
+                    if (targetElement) {
+                        targetElement.classList.toggle('open');
+                        const isOpen = targetElement.classList.contains('open');
+                        this.textContent = isOpen ? this.getAttribute('data-open-text') : this.getAttribute('data-close-text');
+                    }
+                });
+
+                // Inicialización
+                targetElement.classList.remove('open');
+                button.textContent = button.getAttribute('data-close-text');
+            });
+
+
+            // ----------------------------------------------------
+            // 4. Resaltar la Sección Activa en el Índice
+            // ----------------------------------------------------
+            const sections = document.querySelectorAll('article[id]');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    const link = document.querySelector(`.index-link[href="#${id}"]`);
+
+                    if (link) {
+                        if (entry.isIntersecting) {
+                            document.querySelectorAll('.index-link').forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                        } 
+                    }
+                });
+            }, {
+                rootMargin: '-30% 0px -60% 0px' // Margen para determinar cuándo una sección está "activa"
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+        });
+    </script>
+</body>
+
+</html>
